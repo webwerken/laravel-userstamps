@@ -17,23 +17,13 @@ class UserstampsTraitObserver
     public function creating($model)
     {
         if (! $model->created_by) {
-            $model->created_by = $this->getAuthenticatedUserId();
+            $model->created_by = $this->getAuthenticatedUsername();
         }
 
         if (! $model->updated_by) {
-            $model->updated_by = $this->getAuthenticatedUserId();
+            $model->updated_by = $this->getAuthenticatedUsername();
         }
        
-    }
-
-    /**
-     * Get authenticated user id depending on model's auth guard.
-     *
-     * @return int
-     */
-    protected function getAuthenticatedUserId()
-    {
-        return auth()->check() ? auth()->id() : 0;
     }
 
     /**
@@ -44,7 +34,7 @@ class UserstampsTraitObserver
     public function updating($model)
     {
         if (! $model->isDirty('updated_by')) {
-            $model->updated_by = $this->getAuthenticatedUserId();
+            $model->updated_by = $this->getAuthenticatedUsername();
         }
     }
     
@@ -56,34 +46,17 @@ class UserstampsTraitObserver
     public function saving($model)
     {
         if (! $model->isDirty('updated_by')) {
-            $model->updated_by = $this->getAuthenticatedUserId();
+            $model->updated_by = $this->getAuthenticatedUsername();
         }
     }
 
-
-     /**
-      * Model's deleting event hook.
-      *
-      * @param \Hrshadhin\Userstamps\UserstampsTrait $model
-      */
-    public function deleting($model)
+    /**
+     * Get authenticated user id depending on model's auth guard.
+     *
+     * @return int
+     */
+    protected function getAuthenticatedUsername()
     {
-        if (! $model->isDirty('deleted_by')) {
-            $model->deleted_by = $this->getAuthenticatedUserId();
-            //explicit save if softdelete trait is used
-            $model->save();
-        }
-    }
-
-     /**
-      * Model's restoring event hook.
-      *
-      * @param \Hrshadhin\Userstamps\UserstampsTrait $model
-      */
-    public function restoring($model)
-    {
-        if (! $model->isDirty('deleted_by')) {
-            $model->deleted_by = null;
-        }
+        return auth()->check() ? auth()->user()->username : '';
     }
 }
