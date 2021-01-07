@@ -17,8 +17,8 @@ class UserstampsServiceProvider extends ServiceProvider
     {
         Blueprint::macro(
             'userstamps', function () {
-                $this->string('created_by', 35)->index();
-                $this->string('updated_by', 35)->index();    
+                $this->string('created_by', 35)->nullable();
+                $this->string('updated_by', 35)->nullable();    
             }
         );
         Blueprint::macro(
